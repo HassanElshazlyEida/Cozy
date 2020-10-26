@@ -25,7 +25,7 @@
 							data-whitespace="normal"
 							data-basealign="slide"
 							data-responsive_offset="off" >
-							BEST SELLERS
+							{{ App\Setting::orderBy('id', 'DESC')->get()->first()->appname}}
 	                	</div>
 	                    <div class="tp-caption tp-resizeme slide-caption-title-2"
 	                        data-frames='[{"delay":1000,"speed":1000,"frame":"0","from":"y:-50px;opacity:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"frame":"999","to":"y:-20px;opacity:0;","ease":"Power3.easeInOut"}]'
@@ -41,7 +41,7 @@
 							data-whitespace="normal"
 							data-basealign="slide"
 							data-responsive_offset="off" >
-							<span>SOFA</span> COLLECTION
+							{{$first_Slider->name}}
 	                	</div>
 	                	<div class="tp-caption tp-resizeme slide-caption-title-3"
 	                        data-frames='[{"delay":0,"speed":300,"frame":"0","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"auto:auto;","ease":"Power3.easeInOut"}]'
@@ -115,7 +115,7 @@
 							data-whitespace="normal"
 							data-basealign="slide"
 							data-responsive_offset="off" >
-							BEST SELLERS
+							{{ App\Setting::orderBy('id', 'DESC')->get()->first()->appname}}
 	                	</div>
 	                    <div class="tp-caption tp-resizeme slide-caption-title-2"
 	                        data-frames='[{"delay":1000,"speed":1000,"frame":"0","from":"y:-50px;opacity:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"frame":"999","to":"y:-20px;opacity:0;","ease":"Power3.easeInOut"}]'
@@ -131,7 +131,7 @@
 							data-whitespace="normal"
 							data-basealign="slide"
 							data-responsive_offset="off" >
-							<span>SOFA</span> COLLECTION
+							{{$second_Slider->name}}
 	                	</div>
 	                	<div class="tp-caption tp-resizeme slide-caption-title-3"
 	                        data-frames='[{"delay":0,"speed":300,"frame":"0","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"auto:auto;","ease":"Power3.easeInOut"}]'
@@ -205,7 +205,7 @@
 							data-whitespace="normal"
 							data-basealign="slide"
 							data-responsive_offset="off" >
-							BEST SELLERS
+							{{ App\Setting::orderBy('id', 'DESC')->get()->first()->appname}}
 	                	</div>
 	                    <div class="tp-caption tp-resizeme slide-caption-title-2"
 	                        data-frames='[{"delay":1000,"speed":1000,"frame":"0","from":"y:-50px;opacity:0;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":500,"frame":"999","to":"y:-20px;opacity:0;","ease":"Power3.easeInOut"}]'
@@ -221,7 +221,7 @@
 							data-whitespace="normal"
 							data-basealign="slide"
 							data-responsive_offset="off" >
-							<span>SOFA</span> COLLECTION
+							{{$third_Slider->name}}
 	                	</div>
 	                	<div class="tp-caption tp-resizeme slide-caption-title-3"
 	                        data-frames='[{"delay":0,"speed":300,"frame":"0","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"auto:auto;","ease":"Power3.easeInOut"}]'

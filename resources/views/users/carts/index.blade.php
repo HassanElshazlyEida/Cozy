@@ -2,7 +2,7 @@
 @include('users.layouts.header.header')
 	<div class="page-content">
 		<!-- Breadcrumb Section -->
-		<section class="breadcrumb-contact-us breadcrumb-section section-box" style="background-image: url({{ asset('images/shop-bc.jpg') }})">
+		<section class="breadcrumb-contact-us breadcrumb-section section-box" style="background-image: url({{ isset($setting->BGshop) ?  Storage::url($setting->BGshop) : asset('images/shop-bc.jpg') }})">
 			<div class="container">
 				<div class="breadcrumb-inner">
 					<h1>Cart</h1>

@@ -36,7 +36,8 @@ class CartController extends Controller
         $title=!empty(Setting::orderBy('id', 'DESC')->get()->first())?
         Setting::orderBy('id', 'DESC')->get()->first()->appname."| Cart" :
         "Cozy | Cart";
-        return view('users.carts.index',compact('title','categories'));
+        $setting=Setting::orderBy('id', 'DESC')->get()->first();
+        return view('users.carts.index',compact('title','categories',"setting"));
     }
 
     /**
