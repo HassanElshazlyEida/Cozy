@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\Notifications\NotificationOrder;
+use Illuminate\Notifications\Notification;
 class CartController extends Controller
 {
     /**
@@ -200,11 +202,14 @@ class CartController extends Controller
             }
             /*Add order */
             $request->session()->forget('cart');//Clear seasion
-            $title      = 'Novas | Orderd';
+            $title=!empty(Setting::orderBy('id', 'DESC')->get()->first())?
+            Setting::orderBy('id', 'DESC')->get()->first()->appname."|  Complete Order" :
+            "Cozy | Complete Order";
+            $user=Auth::user();
+            $user->notify(new NotificationOrder($user));
             return view('users.carts.thanks',compact('title','order','categories'));
         }else{
             return redirect()->route('shop');
         }
-
     }
 }

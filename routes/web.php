@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 use Illuminate\Support\Facades\Auth;
 /*
 |-------------------------------------
@@ -9,13 +8,16 @@ use Illuminate\Support\Facades\Auth;
 |-------------------------------------
 */
 Auth::routes();
+
+
+
 /*
 |--------------------------------------
 | Main Routes (Home)
 |--------------------------------------
 */
-    Route::get('/', 'HomeController@index')->name('Ecommerce'); 
-    Route::group(['prefix'=>"main"],function(){
+    Route::get('/', 'HomeController@index')->name('Ecommerce');
+    Route::group(['prefix'=>"/"],function(){
         Route::get('shop', 'HomeController@shop')->name('shop');
         Route::get('shop/{id}/{slug}', 'HomeController@SpecificCateg')->name('shop.category');
         Route::get('shop/product/{id}/{slug}', 'HomeController@product')->name('shop.product');
@@ -44,12 +46,11 @@ Route::group(['middleware' => 'admin' ], function () {
     Route::get('/admin', function() {
         return redirect('admin/dashboard');
     });
+	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'Admin\ProfileController@edit']);
 
-	Route::get('main/profile', ['as' => 'profile.edit', 'uses' => 'Admin\ProfileController@edit']);
+	Route::put('profile', ['as' => 'profile.update', 'uses' => 'Admin\ProfileController@update']);
 
-	Route::put('main/profile', ['as' => 'profile.update', 'uses' => 'Admin\ProfileController@update']);
-
-	Route::put('main/profile/password', ['as' => 'profile.password', 'uses' => 'Admin\ProfileController@password']);
+	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'Admin\ProfileController@password']);
 
     Route::group(['prefix'=>"admin"],function(){
 /*
@@ -100,6 +101,22 @@ Route::group(['middleware' => 'admin' ], function () {
             });
         });
 
+        /*
+|--------------------------------------
+| Notifications
+|--------------------------------------
+*/
+        Route::get("markAsRead",function(){
+            auth()->user()->unreadNotifications->markAsRead();
+            return redirect()->back();
+        })->name('notify_clear');
+        Route::get("markAsRead_for_element/{notify}",function($notify){
+            auth()->user()->notifications
+            ->where('id', $notify)
+            ->first()->update(['read_at' => now()]);
+            return redirect()->back();
+        })->name('notify_element');
+
 /*
 |--------------------------------------
 | Setting Controller
@@ -115,8 +132,8 @@ Route::group(['middleware' => 'admin' ], function () {
 
 Route::group(['middleware' => 'auth' ], function () {
     /* Website */
-    Route::get('main/shop/check-out', 'CartController@checkOut')->name('cart.checkOut');
-    Route::post('main/shop/check-out/placeOrder', 'CartController@placeOrder')->name('cart.placeOrder');
+    Route::get('shop/check-out', 'CartController@checkOut')->name('cart.checkOut');
+    Route::post('shop/check-out/placeOrder', 'CartController@placeOrder')->name('cart.placeOrder');
     //Route::get('main/shop/trackOrder', 'CartController@trackOrder')->name('cart.tracking');
 });
 
