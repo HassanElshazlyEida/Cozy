@@ -1,16 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Category;
-use App\Comment;
 use App\Order;
 use App\Order_product;
-use App\Product;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Setting;
+
 class OrderController extends Controller
 {
     /**
@@ -18,39 +13,53 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($status)
+    // ->whereDate('created_at', Carbon::today())
+    /*
+            ->orderBy('created_at','desc')
+            ->get();
+    */
+    public function index($status,Request $Request)
     {
-        $pending            = Order::where('status','pending')
-        ->orderBy('created_at','desc')
-        ->get();
-        $shipped            = Order::where('status','shipped')
-        ->orderBy('created_at','desc')
-        ->get();
-        $deliverd            = Order::where('status','delivered')
-        ->orderBy('created_at','desc')
-        ->get();
-        $canceled            = Order::where('status','canceled')
-        ->orderBy('created_at','desc')
-        ->get();
         if($status == 'pending'){
-            $orders         = Order::where('status','pending')
-            ->orderBy('created_at','desc')
-            ->get();
-        }elseif($status == 'shipped'){
-            $orders         = Order::where('status','shipped')
-            ->orderBy('created_at','desc')
-            ->get();
+            $query         = Order::where('status','pending');
         }elseif($status == 'delivered'){
-            $orders         = Order::where('status','delivered')
-            ->orderBy('created_at','desc')
-            ->get();
+            $query         = Order::where('status','delivered');
         }else{
-            $orders         = Order::where('status','canceled')
-            ->orderBy('created_at','desc')
-            ->get();
+            $query         = Order::where('status','canceled');
         }
+        // --------- Select Box -------------
+        $today  = 0;
+        $week   = 0;
+        $month  = 0;
+        $all    = 0;
 
-        return view('admin.orders.index',compact('orders','pending','shipped','deliverd','canceled','status'));
+        // -----------Search And Sort--------------
+        if (isset($Request->order) && $Request->order == 'today') {
+            $query->whereDate('created_at', Carbon::today())
+            ->orderBy('created_at','desc');
+            $today = 1;
+        }elseif (isset($Request->order) && $Request->order == 'week') {
+            $date = \Carbon\Carbon::today()->subDays(7);
+            $query->whereDate('created_at','>=', $date)
+            ->orderBy('created_at','desc');
+            $week = 1;
+        }elseif (isset($Request->order) && $Request->order == 'month') {
+            $date = \Carbon\Carbon::today()->subDays(30);
+            $query->whereDate('created_at','>=', $date)
+            ->orderBy('created_at','desc');
+            $month = 1;
+        }elseif (isset($Request->order) && $Request->order == 'all') {
+            $query->orderBy('created_at','desc');
+            $all = 1;
+        }else{
+            $query->whereDate('created_at', Carbon::today())
+            ->orderBy('created_at','desc');
+            $today = 1;
+        }
+        $orders = $query->paginate(10);
+        $orders->appends(['order' => $Request->order]);
+
+        return view('admin.orders.index',compact('orders','status','today','week','month','all'));
     }
     public function shipped($id)
     {

@@ -14,8 +14,8 @@ Auth::routes();
 | Main Routes (Home)
 |--------------------------------------
 */
+    Route::get('/', 'HomeController@index')->name('Ecommerce'); 
     Route::group(['prefix'=>"main"],function(){
-        Route::get('/', 'HomeController@index')->name('Ecommerce');
         Route::get('shop', 'HomeController@shop')->name('shop');
         Route::get('shop/{id}/{slug}', 'HomeController@SpecificCateg')->name('shop.category');
         Route::get('shop/product/{id}/{slug}', 'HomeController@product')->name('shop.product');
@@ -84,7 +84,7 @@ Route::group(['middleware' => 'admin' ], function () {
         Route::get('products/activation/{id}', 'ProductController@activation')->name('products.activation');
         Route::get('products/availability/{id}', 'ProductController@availability')->name('products.availability');
         Route::get('products/destroy/{id}', 'ProductController@destroy')->name('products.destroy');
-            
+
 /*
 |--------------------------------------
 | Orders Controller

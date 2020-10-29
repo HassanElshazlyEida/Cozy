@@ -13,6 +13,37 @@
                             <div class="col-8">
                                 <h3 class="mb-0">{{ $status }} {{ __('Orders') }}</h3>
                             </div>
+                            <div class="col-4">
+                                <form action="" method="get">
+                                    @csrf
+                                    <select class="custom-select" name="order" id="" style="width:70%">
+                                        @if ($today==1)
+                                            <option value="today" selected>Today</option>
+                                        @else
+                                            <option value="today">Today</option>
+                                        @endif
+
+                                        @if ($week==1)
+                                            <option value="week" selected>Last week</option>
+                                        @else
+                                            <option value="week">Last week</option>
+                                        @endif
+
+                                        @if ($month==1)
+                                            <option value="month" selected>Last month</option>
+                                        @else
+                                            <option value="month">Last month</option>
+                                        @endif
+                                        
+                                        @if ($all==1)
+                                            <option value="all" selected>All</option>
+                                        @else
+                                            <option value="all">All</option>
+                                        @endif
+                                    </select>
+                                    <button class="btn btn-dark">GO ></button>
+                                </form>
+                            </div>
                         </div>
                     </div>
 
@@ -34,9 +65,10 @@
                                 <tr>
                                     <th scope="col"></th>
                                     <th scope="col">{{ __('User Name') }}</th>
-                                    <th scope="col">{{ __('Products') }}</th>
+                                    <th scope="col">{{ __('Time') }}</th>
+                                    <th scope="col">{{ __('Needed') }}</th>
                                     <th scope="col">{{ __('Price') }}</th>
-                                    <th scope="col">{{ __('Governorate') }}</th>
+                                    <th scope="col">{{ __('Location') }}</th>
                                     <th scope="col">{{ __('Phone') }}</th>
                                     <th scope="col">{{ __('Change Status') }}</th>
                                     @if ($status != 'delivered' && $status != 'canceled')
@@ -58,31 +90,32 @@
                                             <p>{{ $order->user->name }}</p>
                                         </td>
                                         <td>
-                                            <p>{{ $order->orders->count() }}</p>
+                                            @if ($status == 'pending')
+                                                {{ Carbon\Carbon::parse($order->pending)->format('h:i A') }}
+                                            @elseif($status == 'delivered')
+                                                {{ Carbon\Carbon::parse($order->pending)->format('h:i A') }}
+                                            @else
+                                                {{ $order->updated_at->format('h:i A') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <p>{{ $order->time }}</p>
                                         </td>
                                         <td>
                                             <p style="margin: 0">{{ $order->total }}$</p>
-                                            <small>({{ $order->subtotal }} + {{ $order->shipping }})</small>
                                         </td>
                                         <td>
-                                            <p>{{ $order->governorate }}</p>
+                                            <p>{{ $order->location }}</p>
                                         </td>
                                         <td>
                                             <p>{{ $order->phone }}</p>
                                         </td>
                                         <td>
                                             @if ($status == 'pending')
-                                            <form action="{{ route('order.shipped',['id' => $order->id]) }}" method="POST">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Are you sure?')">
-                                                    {{ __('Shipped') }}<i class="fa fa-check"></i>
-                                                </button>
-                                            </form>
-                                            @elseif($status == 'shipped')
                                             <form action="{{ route('order.delivered',['id' => $order->id]) }}" method="POST">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Are you sure?')">
-                                                    {{ __('Deliverd') }}<i class="fa fa-check"></i>
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    {{ __('delivered') }}<i class="fa fa-check"></i>
                                                 </button>
                                             </form>
                                             @else
@@ -117,15 +150,15 @@
                             </div>
                         @endif
                     </div>
+                    <div class="navigation pagination">
+                        <div class="page-numbers">
+                            {{ $orders->appends(Request::only(['order']))->links() }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
 
-              </div>
-        </div>
-    </div>
-</div>
-    @include('layouts.footers.auth')
     </div>
 @endsection

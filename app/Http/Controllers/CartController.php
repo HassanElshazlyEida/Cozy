@@ -155,11 +155,12 @@ class CartController extends Controller
         if(!Auth::user()){
             return redirect()->route('login');
         }else{
+            $user = Auth::user();
             if(!session('cart')){
                 return redirect()->back();
             }
             $categories = $this->categories;
-            return view('users.carts.check-out',compact('title','categories'));
+            return view('users.carts.check-out',compact('title','categories','user'));
         }
     }
     public function placeOrder(Request $request)

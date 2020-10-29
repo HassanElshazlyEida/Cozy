@@ -3,8 +3,8 @@
 	<div class="page-content">
 		<!-- Breadcrumb Section -->
         <section class="breadcrumb-contact-us breadcrumb-section section-box"
-        @if (isset($category_info))
-            style="background-image: url({{Storage::url($category_info->picture)}})"
+        @if (isset($category_info) || isset($setting_shop_image))
+            style="background-image: url({{Storage::url($category_info->picture ?? $setting_shop_image)}})"
         @else
             style="background-image: url({{asset('images/shop-bc.jpg')}})"
         @endif
@@ -61,6 +61,11 @@
 								<div class="widget widget_product_categories">
 									<h3 class="widget-title">Categories</h3>
 									<ul class="product-categories">
+                                        <li class="cat-item cat-parent">
+                                            <a href="{{route("shop")}}"class="Category_name">
+                                                <span>All </span>
+                                            </a>
+                                        </li>
                                         @foreach ($categories as $category)
                                             <li class="cat-item cat-parent">
                                                 <a href="{{route('shop.category', ['id' => $category->id, 'slug' => str_slug($category->name)])}}" class="Category_name">
@@ -72,14 +77,6 @@
 									</ul>
 								</div>
 								<!-- Banner -->
-								<div class="widgets widget_banner">
-									<img src="{{asset('images/widget_banner.jpg')}}" alt="banner">
-									<div class="widget_banner-content">
-										<span>ON SALE</span>
-										<p>Awa Pendant Lamp</p>
-										<a href="shop-full-width.html">Shop Now<i class="zmdi zmdi-arrow-right"></i></a>
-									</div>
-								</div>
 							</div>
 						</div>
 						<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
@@ -88,6 +85,7 @@
 								<div class="storefront-sorting">
 									<p class="woocommerce-result-count">Showing 1 – {{$products->count()}} of {{$all_product->count()}} results</p>
                                     <form class="woocommerce-ordering" method="get">
+                                        @csrf
                                         <input type="text" name="search" hidden value="{{app('request')->input('search')}}">
 										<select name="order" class="orderby" id="SaveSelectionOrder">
                                             <option value="newest" selected="selected">Sort by newness</option>

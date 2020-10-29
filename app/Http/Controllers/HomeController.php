@@ -117,7 +117,9 @@ class HomeController extends Controller
             return $query->where('active', 1);
         })
         ->get();
-        return view('users.categories.show',compact('title','categories','products','product_picture','all_product'
+        $setting_shop_image=!empty(Setting::orderBy('id', 'DESC')->get()->first())?
+        Setting::orderBy('id', 'DESC')->get()->first()->BGshop:null;
+        return view('users.categories.show',compact('title','categories','products','product_picture','all_product',"setting_shop_image"
         ));
     }
     public function SpecificCateg(Request $Request,$id, $slug)
