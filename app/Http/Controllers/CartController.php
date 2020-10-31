@@ -11,9 +11,10 @@ use App\Setting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use App\Events\PusherNotify;
 use App\Http\Controllers\Notifications\NotificationOrder;
-use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
+
 class CartController extends Controller
 {
     /**
@@ -167,6 +168,7 @@ class CartController extends Controller
     }
     public function placeOrder(Request $request)
     {
+
         $this->validate($request,[
             'fullName'      => 'required',
             'location'   => 'required|max:60',
@@ -205,8 +207,23 @@ class CartController extends Controller
             $title=!empty(Setting::orderBy('id', 'DESC')->get()->first())?
             Setting::orderBy('id', 'DESC')->get()->first()->appname."|  Complete Order" :
             "Cozy | Complete Order";
+            /* Notification : remove 1 Notification from back*/
+            if(DB::table('notifications')->count() >maximum_notify()) {
+                DB::table('notifications')->orderBy('created_at', 'ASC')->limit(1)->delete();
+            }
+
+            //Send notify to database
             $user=Auth::user();
-            $user->notify(new NotificationOrder($user));
+            $order=$user->orders->last();
+
+            $user->notify(new NotificationOrder($order));
+            //pusher notifiy without refresh the page
+            event(new PusherNotify(
+                $order->time,
+                $order->fullName,
+                \Carbon\Carbon::parse($order->created_at)->timezone("Africa/Cairo")->format('h:i a ')
+            ));
+
             return view('users.carts.thanks',compact('title','order','categories'));
         }else{
             return redirect()->route('shop');

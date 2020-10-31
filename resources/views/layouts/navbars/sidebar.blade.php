@@ -1,3 +1,6 @@
+<?php use Illuminate\Support\Facades\DB;
+  $notifications=  DB::table('notifications')->whereNull('read_at')->orderBy('created_at', 'DESC')->skip(0)->take(maximum_notify())->get();
+  ?>
 <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main">
     <div class="container-fluid">
         <!-- Toggler -->
@@ -11,7 +14,7 @@
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidenav-collapse-main-notify" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle navigation">
             <i class="ni ni-bell-55 " id="count_notify">
-                {{auth()->user()->unReadNotifications->count()}}
+                {{count($notifications)}}
             </i>
         </button>
         <!-- Collapse -->
@@ -35,7 +38,7 @@
             </div>
             <!-- Navigation -->
             <ul class="navbar-nav nav align-items-center d-md-none">
-                @if(auth()->user()->unReadNotifications->count()==0)
+                @if(count($notifications)==0)
                 <div class=" dropdown-header noti-title">
                     <h6 class="text-overflow m-0">{{ __('There are no Notification yet !') }}</h6>
                 </div>
@@ -47,17 +50,16 @@
                     Mark all as Read
                         <i class="ni ni-check-bold text-green"></i>
                 </a>
-                @foreach(auth()->user()->unReadNotifications as $notify)
+                @foreach($notifications as $notify)
                 <div class=" dropdown-header">
-                    <a href="{{route("orders",'pending')}}" class="dropdown-item">
+                    <a href="{{route("order.show",json_decode($notify->data)->id )}}" class="dropdown-item">
                         <object>
                             <a href="{{route("notify_element",['notify'=>$notify->id])}}">
-                                    <i class="ni ni-fat-remove text-red" style="font-size: 20px"></i>
-                            </a>
+                                <i class="ni ni-fat-remove text-red" style="font-size: 20px"></i>
+                        </a>
                         </object>
-                        <span>{{$notify->data['Name']}}</span>,
-                        Created At <span>{{  \Carbon\Carbon::parse($notify->data['created_at'])->format('h:m a ') }}</span>,
-                        Deliverd <span>{{ $notify->data['Deliverd_After']}}</span>
+                        Created At <span>{{  \Carbon\Carbon::parse(json_decode($notify->data)->created_at)->timezone('Africa/Cairo')->format('h:i a ') }}</span>,
+                        Deliverd <span>{{ json_decode($notify->data)->Deliverd_After}}</span>
                         <i class="ni ni-bold-right text-green"></i>
                     </a>
                 </div>

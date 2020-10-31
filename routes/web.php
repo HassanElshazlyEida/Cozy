@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 /*
 |-------------------------------------
 | User Routes
@@ -16,6 +17,7 @@ Auth::routes();
 | Main Routes (Home)
 |--------------------------------------
 */
+
     Route::get('/', 'HomeController@index')->name('Ecommerce');
     Route::group(['prefix'=>"/"],function(){
         Route::get('shop', 'HomeController@shop')->name('shop');
@@ -46,11 +48,7 @@ Route::group(['middleware' => 'admin' ], function () {
     Route::get('/admin', function() {
         return redirect('admin/dashboard');
     });
-	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'Admin\ProfileController@edit']);
 
-	Route::put('profile', ['as' => 'profile.update', 'uses' => 'Admin\ProfileController@update']);
-
-	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'Admin\ProfileController@password']);
 
     Route::group(['prefix'=>"admin"],function(){
 /*
@@ -58,6 +56,7 @@ Route::group(['middleware' => 'admin' ], function () {
 | Admin Controller
 |--------------------------------------
 */
+
         Route::get('dashboard', 'Admin\HomeController@index')->name('home');
 
         Route::resource('admins', 'Admin\AdminController', ['except' => ['show']]);
@@ -107,13 +106,13 @@ Route::group(['middleware' => 'admin' ], function () {
 |--------------------------------------
 */
         Route::get("markAsRead",function(){
-            auth()->user()->unreadNotifications->markAsRead();
+            DB::table('notifications')->truncate();
             return redirect()->back();
         })->name('notify_clear');
         Route::get("markAsRead_for_element/{notify}",function($notify){
-            auth()->user()->notifications
-            ->where('id', $notify)
-            ->first()->update(['read_at' => now()]);
+
+            DB::table('notifications')
+            ->where('id', $notify)->delete();
             return redirect()->back();
         })->name('notify_element');
 
@@ -131,9 +130,25 @@ Route::group(['middleware' => 'admin' ], function () {
 });
 
 Route::group(['middleware' => 'auth' ], function () {
-    /* Website */
+/*
+|--------------------------------------
+| CheckOut Order
+|--------------------------------------
+*/
     Route::get('shop/check-out', 'CartController@checkOut')->name('cart.checkOut');
     Route::post('shop/check-out/placeOrder', 'CartController@placeOrder')->name('cart.placeOrder');
     //Route::get('main/shop/trackOrder', 'CartController@trackOrder')->name('cart.tracking');
+/*
+|--------------------------------------
+| Profile Settings
+|--------------------------------------
+*/
+    Route::group(['prefix'=>"profile"],function(){
+        Route::get('/', ['as' => 'profile.edit', 'uses' => 'Admin\ProfileController@edit']);
+
+        Route::put('/', ['as' => 'profile.update', 'uses' => 'Admin\ProfileController@update']);
+
+        Route::put('/password', ['as' => 'profile.password', 'uses' => 'Admin\ProfileController@password']);
+    });
 });
 

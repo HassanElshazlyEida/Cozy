@@ -18,9 +18,10 @@ class NotificationOrder extends Notification
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($order)
     {
-        $this->user=$user->orders->last();
+
+        $this->order=$order;
     }
 
     /**
@@ -44,13 +45,14 @@ class NotificationOrder extends Notification
     {
         return [
 
-            "Name" => $this->user->fullName,
-            "location" => $this->user->location,
-            "phone" => $this->user->phone,
-            'created_at' => $this->user->created_at,
-            'Deliverd_After' => $this->user->time,
-            'more_Info' => $this->user->moreInfo,
-            'total'=> $this->user->total,
+            "Name" => $this->order->fullName,
+            "location" => $this->order->location,
+            "phone" => $this->order->phone,
+            'created_at' => $this->order->created_at,
+            'Deliverd_After' => $this->order->time,
+            'more_Info' => $this->order->moreInfo,
+            'total'=> $this->order->total,
+            'id'=>  $this->order->id,
 
         ];
     }

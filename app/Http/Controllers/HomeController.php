@@ -122,6 +122,7 @@ class HomeController extends Controller
         return view('users.categories.show',compact('title','categories','products','product_picture','all_product',"setting_shop_image"
         ));
     }
+   
     public function SpecificCateg(Request $Request,$id, $slug)
     {
 
